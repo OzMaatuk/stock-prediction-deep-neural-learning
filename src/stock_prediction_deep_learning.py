@@ -18,11 +18,11 @@ import pandas as pd
 import argparse
 from datetime import datetime
 
-from stock_prediction_class import StockPrediction
-from stock_prediction_lstm import LongShortTermMemory
-from stock_prediction_numpy import StockData
-from stock_prediction_plotter import Plotter
-from stock_prediction_readme_generator import ReadmeGenerator
+from src.stock_prediction_class import StockPrediction
+from src.stock_prediction_lstm import LongShortTermMemory
+from src.stock_prediction_numpy import StockData
+from src.stock_prediction_plotter import Plotter
+from src.stock_prediction_readme_generator import ReadmeGenerator
 
 # os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin/'
 

@@ -18,8 +18,8 @@ import tensorflow as tf
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from stock_prediction_class import StockPrediction
-from stock_prediction_numpy import StockData
+from src.stock_prediction_class import StockPrediction
+from src.stock_prediction_numpy import StockData
 from datetime import timedelta, datetime
 
 os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin/'

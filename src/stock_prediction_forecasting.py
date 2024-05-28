@@ -18,7 +18,7 @@ import tensorflow as tf
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
-from stock_prediction_numpy import StockData
+from src.stock_prediction_numpy import StockData
 from datetime import date
 os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin/'
 
