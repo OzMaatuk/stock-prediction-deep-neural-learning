@@ -14,9 +14,11 @@
 # ==============================================================================
 import os
 import tensorflow as tf
-from tensorflow.python.keras import Sequential
-from tensorflow.python.keras.layers import Dropout, Dense, LSTM
-
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dropout, Dense
+from tensorflow.keras.layers import LSTM
+from tensorflow.keras.metrics import MeanSquaredError
+from tensorflow.keras.callbacks import EarlyStopping
 
 class LongShortTermMemory:
     def __init__(self, project_folder):
@@ -24,12 +26,12 @@ class LongShortTermMemory:
 
     def get_defined_metrics(self):
         defined_metrics = [
-            tf.keras.metrics.MeanSquaredError(name='MSE')
+            MeanSquaredError(name='MSE')
         ]
         return defined_metrics
 
     def get_callback(self):
-        callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3, mode='min', verbose=1)
+        callback = EarlyStopping(monitor='val_loss', patience=3, mode='min', verbose=1)
         return callback
 
     def create_model(self, x_train):

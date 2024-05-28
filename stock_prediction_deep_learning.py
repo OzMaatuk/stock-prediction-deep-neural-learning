@@ -24,7 +24,7 @@ from stock_prediction_numpy import StockData
 from stock_prediction_plotter import Plotter
 from stock_prediction_readme_generator import ReadmeGenerator
 
-os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin/'
+# os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin/'
 
 
 def train_LSTM_network(stock):
@@ -39,7 +39,7 @@ def train_LSTM_network(stock):
     history = model.fit(x_train, y_train, epochs=stock.get_epochs(), batch_size=stock.get_batch_size(), validation_data=(x_test, y_test),
                         callbacks=[lstm.get_callback()])
     print("saving weights")
-    model.save(os.path.join(stock.get_project_folder(), 'model_weights.h5'))
+    model.save(os.path.join(stock.get_project_folder(), 'model_weights.keras'))
 
     plotter.plot_loss(history)
     plotter.plot_mse(history)
