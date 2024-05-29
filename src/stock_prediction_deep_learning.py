@@ -13,24 +13,24 @@
 # limitations under the License.
 # ==============================================================================
 import os
-import secrets
 import pandas as pd
-import argparse
-from datetime import datetime
 
-from src.stock_prediction_class import StockPrediction
 from src.stock_prediction_lstm import LongShortTermMemory
-from src.stock_prediction_numpy import StockData
+from src.stock_prediction_numpy import DataClass
 from src.stock_prediction_plotter import Plotter
 from src.stock_prediction_readme_generator import ReadmeGenerator
 
-# os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin/'
-
 
 def train_LSTM_network(stock):
-    data = StockData(stock)
+    data = DataClass()
     plotter = Plotter(True, stock.get_project_folder(), stock.get_ticker(), data.get_stock_currency(), stock.get_ticker())
-    # (x_train, y_train), (x_test, y_test), (training_data, test_data) = data.download_transform_to_numpy(stock.get_time_steps(), stock.get_project_folder())
+    # (x_train, y_train), (x_test, y_test), (training_data, test_data) = data.download_transform_to_numpy(
+        # stock.get_ticker(), 
+        # stock.get_time_steps(), 
+        # stock.get_project_folder(),
+        # stock.get_start_date(),
+        # stock.get_end_date(),
+        # stock.get_validation_date())
     csv_path = stock.get_project_folder() + "downloaded_data.csv"
     (x_train, y_train), (x_test, y_test), (training_data, test_data) = data.load_csv_transform_to_numpy(stock.get_time_steps(), csv_path)
     plotter.plot_histogram_data_split(training_data, test_data, stock.get_validation_date())
@@ -54,7 +54,7 @@ def train_LSTM_network(stock):
 
     print("plotting prediction results")
     test_predictions_baseline = model.predict(x_test)
-    test_predictions_baseline = data.get_min_max().inverse_transform(test_predictions_baseline)
+    test_predictions_baseline = data.min_max.inverse_transform(test_predictions_baseline)
     test_predictions_baseline = pd.DataFrame(test_predictions_baseline)
     test_predictions_baseline.to_csv(os.path.join(stock.get_project_folder(), 'predictions.csv'))
 
@@ -67,47 +67,3 @@ def train_LSTM_network(stock):
     # generator.write()
 
     print("prediction is finished")
-
-
-# The Main function requires 3 major variables
-# 1) Ticker => defines the short code of a stock
-# 2) Start date => Date when we want to start using the data for training, usually the first data point of the stock
-# 3) Validation date => Date when we want to start partitioning our data from training to validation
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description=("parsing arguments"))
-    parser.add_argument("-ticker", default="^FTSE")
-    parser.add_argument("-start_date", default="2017-11-01")
-    parser.add_argument("-validation_date", default="2021-09-01")
-    parser.add_argument("-epochs", default="100")
-    parser.add_argument("-batch_size", default="10")
-    parser.add_argument("-time_steps", default="3")
-    
-    args = parser.parse_args()
-    
-    STOCK_TICKER = args.ticker
-    STOCK_START_DATE = pd.to_datetime(args.start_date)
-    STOCK_VALIDATION_DATE = pd.to_datetime(args.validation_date)
-    EPOCHS = int(args.epochs)
-    BATCH_SIZE = int(args.batch_size)
-    TIME_STEPS = int(args.time_steps)
-    TODAY_RUN = datetime.today().strftime("%Y%m%d")
-    TOKEN = STOCK_TICKER + '_' + TODAY_RUN + '_' + secrets.token_hex(16)
-    print('Ticker: ' + STOCK_TICKER)
-    print('Start Date: ' + STOCK_START_DATE.strftime("%Y-%m-%d"))
-    print('Validation Date: ' + STOCK_START_DATE.strftime("%Y-%m-%d"))
-    print('Test Run Folder: ' + TOKEN)
-    # create project run folder
-    PROJECT_FOLDER = os.path.join(os.getcwd(), TOKEN)
-    if not os.path.exists(PROJECT_FOLDER):
-        os.makedirs(PROJECT_FOLDER)
-
-    stock_prediction = StockPrediction(STOCK_TICKER, 
-                                       STOCK_START_DATE, 
-                                       STOCK_VALIDATION_DATE, 
-                                       PROJECT_FOLDER, 
-                                       EPOCHS,
-                                       TIME_STEPS,
-                                       TOKEN,
-                                       BATCH_SIZE)
-    # Execute Deep Learning model
-    train_LSTM_network(stock_prediction)

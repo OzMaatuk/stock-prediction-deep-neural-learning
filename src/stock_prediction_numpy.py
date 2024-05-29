@@ -1,17 +1,3 @@
-# Copyright 2020-2024 Jordi Corbilla. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
 import os
 
 import numpy as np
@@ -19,15 +5,11 @@ from datetime import timedelta
 import random
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-from datetime import datetime
 import yfinance as yf
 
 
-class StockData:
-    def __init__(self, stock):
-        self._stock = stock
-        # self._sec = yf.Ticker(self._stock.get_ticker())
-        self._min_max = MinMaxScaler(feature_range=(0, 1))
+class DataClass:
+    min_max = MinMaxScaler(feature_range=(0, 1))
 
     def __data_verification(self, train):
         print('mean:', train.mean(axis=0))
@@ -35,29 +17,23 @@ class StockData:
         print('min', train.min())
         print('Std dev:', train.std(axis=0))
 
-    def get_min_max(self):
-        return self._min_max
-
     def get_stock_currency(self):
         # return self._sec.info['currency']
         return "USD"
 
-    def download_transform_to_numpy(self, time_steps, project_folder):
-        end_date = datetime.today()
-        print('End Date: ' + end_date.strftime("%Y-%m-%d"))
-        data = yf.download([self._stock.get_ticker()], start=self._stock.get_start_date(), end=end_date)[['Close']]
+    def download_transform_to_numpy(self, ticker, time_steps, project_folder, start_date, end_date, validation_date):
+        data = yf.download([ticker], start_date, end_date)[['Close']]
         data = data.reset_index()
-        data.to_csv(os.path.join(project_folder, 'downloaded_data_'+self._stock.get_ticker()+'.csv'))
+        data.to_csv(os.path.join(project_folder, 'downloaded_data.csv'))
         #print(data)
-        return self.transform_numpy(data, time_steps)
+        return self.transform_numpy(data, time_steps, validation_date)
 
-    def load_csv_transform_to_numpy(self, time_steps, csv_path):
+    def load_csv_transform_to_numpy(self, time_steps, csv_path, validation_date):
         data = pd.read_csv(csv_path, index_col=0)
         # data = data.reset_index()
-        return self.transform_numpy(data, time_steps)
+        return self.transform_numpy(data, time_steps, validation_date)
 
-    def transform_numpy(self, data, time_steps):
-        validation_date = self._stock.get_validation_date()
+    def transform_numpy(self, data, time_steps, validation_date):
         date_col = pd.to_datetime(data['Date'])
         data['Date'] = date_col
         training_data = data[date_col < validation_date].copy()
@@ -67,7 +43,7 @@ class StockData:
         test_data = test_data.set_index('Date')
         #print(test_data)
 
-        train_scaled = self._min_max.fit_transform(training_data)
+        train_scaled = self.min_max.fit_transform(training_data)
         self.__data_verification(train_scaled)
 
         # Training Data Transformation
@@ -82,7 +58,7 @@ class StockData:
 
         total_data = pd.concat((training_data, test_data), axis=0)
         inputs = total_data[len(total_data) - len(test_data) - time_steps:]
-        test_scaled = self._min_max.fit_transform(inputs)
+        test_scaled = self.min_max.fit_transform(inputs)
 
         # Testing Data Transformation
         x_test = []
@@ -105,7 +81,7 @@ class StockData:
     def pseudo_random(self):
         return random.uniform(0.01, 0.03)
 
-    def generate_future_data(self, time_steps, min_max, start_date, end_date, latest_close_price):
+    def generate_future_data(self, time_steps, start_date, end_date, latest_close_price):
         x_future = []
         y_future = []
 
@@ -128,7 +104,7 @@ class StockData:
         test_data = pd.DataFrame({'Date': x_future, 'Close': y_future})
         test_data = test_data.set_index('Date')
 
-        test_scaled = min_max.fit_transform(test_data)
+        test_scaled = self.min_max.fit_transform(test_data)
         x_test = []
         y_test = []
         #print(test_scaled.shape[0])

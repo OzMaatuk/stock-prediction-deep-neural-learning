@@ -14,8 +14,8 @@
 # ==============================================================================
 
 
-class StockPrediction:
-    def __init__(self, ticker, start_date, validation_date, project_folder, epochs, time_steps, token, batch_size):
+class StockClass:
+    def __init__(self, ticker, start_date, end_date, validation_date, project_folder, epochs, time_steps, token, batch_size):
         self._ticker = ticker
         self._start_date = start_date
         self._validation_date = validation_date
@@ -24,6 +24,7 @@ class StockPrediction:
         self._time_steps = time_steps
         self._token = token
         self._batch_size = batch_size
+        self._end_date = end_date
 
     def get_ticker(self):
         return self._ticker
@@ -36,6 +37,12 @@ class StockPrediction:
 
     def set_start_date(self, value):
         self._start_date = value
+        
+    def get_end_date(self):
+        return self._end_date
+
+    def set_end_date(self, value):
+        self._end_date = value
 
     def get_validation_date(self):
         return self._validation_date
