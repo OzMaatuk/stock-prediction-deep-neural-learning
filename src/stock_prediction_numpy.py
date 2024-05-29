@@ -26,7 +26,7 @@ import yfinance as yf
 class StockData:
     def __init__(self, stock):
         self._stock = stock
-        self._sec = yf.Ticker(self._stock.get_ticker())
+        # self._sec = yf.Ticker(self._stock.get_ticker())
         self._min_max = MinMaxScaler(feature_range=(0, 1))
 
     def __data_verification(self, train):
@@ -35,14 +35,12 @@ class StockData:
         print('min', train.min())
         print('Std dev:', train.std(axis=0))
 
-    def get_stock_short_name(self):
-        return self._sec.info['shortName']
-
     def get_min_max(self):
         return self._min_max
 
     def get_stock_currency(self):
-        return self._sec.info['currency']
+        # return self._sec.info['currency']
+        return "USD"
 
     def download_transform_to_numpy(self, time_steps, project_folder):
         end_date = datetime.today()
@@ -54,13 +52,16 @@ class StockData:
         return self.transform_numpy(data, time_steps)
 
     def load_csv_transform_to_numpy(self, time_steps, csv_path):
-        data = pd.read_csv(csv_path)
-        data = data.reset_index()
+        data = pd.read_csv(csv_path, index_col=0)
+        # data = data.reset_index()
         return self.transform_numpy(data, time_steps)
 
     def transform_numpy(self, data, time_steps):
-        training_data = data[data['Date'] < self._stock.get_validation_date()].copy()
-        test_data = data[data['Date'] >= self._stock.get_validation_date()].copy()
+        validation_date = self._stock.get_validation_date()
+        date_col = pd.to_datetime(data['Date'])
+        data['Date'] = date_col
+        training_data = data[date_col < validation_date].copy()
+        test_data = data[date_col >= validation_date].copy()
         training_data = training_data.set_index('Date')
         # Set the data frame index using column Date
         test_data = test_data.set_index('Date')
@@ -113,18 +114,16 @@ class StockData:
         # close price for a +-1-3% of the original value, when the value wants to go below
         # zero, it will be forced to go up.
 
-        original_price = latest_close_price
-
         for single_date in self.__date_range(start_date, end_date):
             x_future.append(single_date)
             direction = self.negative_positive_random()
             random_slope = direction * (self.pseudo_random())
             #print(random_slope)
-            original_price = original_price + (original_price * random_slope)
+            latest_close_price = latest_close_price + (latest_close_price * random_slope)
             #print(original_price)
-            if original_price < 0:
-                original_price = 0
-            y_future.append(original_price)
+            if latest_close_price < 0:
+                latest_close_price = 0
+            y_future.append(latest_close_price)
 
         test_data = pd.DataFrame({'Date': x_future, 'Close': y_future})
         test_data = test_data.set_index('Date')
