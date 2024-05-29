@@ -30,7 +30,8 @@ from src.stock_prediction_readme_generator import ReadmeGenerator
 def train_LSTM_network(stock):
     data = StockData(stock)
     plotter = Plotter(True, stock.get_project_folder(), data.get_stock_short_name(), data.get_stock_currency(), stock.get_ticker())
-    (x_train, y_train), (x_test, y_test), (training_data, test_data) = data.download_transform_to_numpy(stock.get_time_steps(), stock.get_project_folder())
+    # (x_train, y_train), (x_test, y_test), (training_data, test_data) = data.download_transform_to_numpy(stock.get_time_steps(), stock.get_project_folder())
+    (x_train, y_train), (x_test, y_test), (training_data, test_data) = data.load_csv_transform_to_numpy(stock.get_time_steps(), stock.get_project_folder() + "downloaded_data_" + stock.get_ticker()+'.csv')
     plotter.plot_histogram_data_split(training_data, test_data, stock.get_validation_date())
 
     lstm = LongShortTermMemory(stock.get_project_folder())
@@ -61,8 +62,8 @@ def train_LSTM_network(stock):
     test_predictions_baseline.index = test_data.index
     plotter.project_plot_predictions(test_predictions_baseline, test_data)
 
-    generator = ReadmeGenerator(stock.get_github_url(), stock.get_token(), data.get_stock_short_name())
-    generator.write()
+    # generator = ReadmeGenerator(stock.get_project_folder(), data.get_stock_short_name())
+    # generator.write()
 
     print("prediction is finished")
 
@@ -79,7 +80,6 @@ if __name__ == '__main__':
     parser.add_argument("-epochs", default="100")
     parser.add_argument("-batch_size", default="10")
     parser.add_argument("-time_steps", default="3")
-    parser.add_argument("-github_url", default="https://github.com/JordiCorbilla/stock-prediction-deep-neural-learning/raw/master/")
     
     args = parser.parse_args()
     
@@ -91,7 +91,6 @@ if __name__ == '__main__':
     TIME_STEPS = int(args.time_steps)
     TODAY_RUN = datetime.today().strftime("%Y%m%d")
     TOKEN = STOCK_TICKER + '_' + TODAY_RUN + '_' + secrets.token_hex(16)
-    GITHUB_URL = args.github_url
     print('Ticker: ' + STOCK_TICKER)
     print('Start Date: ' + STOCK_START_DATE.strftime("%Y-%m-%d"))
     print('Validation Date: ' + STOCK_START_DATE.strftime("%Y-%m-%d"))
@@ -105,7 +104,6 @@ if __name__ == '__main__':
                                        STOCK_START_DATE, 
                                        STOCK_VALIDATION_DATE, 
                                        PROJECT_FOLDER, 
-                                       GITHUB_URL,
                                        EPOCHS,
                                        TIME_STEPS,
                                        TOKEN,

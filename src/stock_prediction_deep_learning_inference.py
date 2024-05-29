@@ -27,7 +27,7 @@ os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin/'
 def main(argv):
     print(tf.version.VERSION)
     inference_folder = os.path.join(os.getcwd(), RUN_FOLDER)
-    stock = StockPrediction(STOCK_TICKER, STOCK_START_DATE, STOCK_VALIDATION_DATE, inference_folder, GITHUB_URL, EPOCHS, TIME_STEPS, TOKEN, BATCH_SIZE)
+    stock = StockPrediction(STOCK_TICKER, STOCK_START_DATE, STOCK_VALIDATION_DATE, inference_folder, EPOCHS, TIME_STEPS, TOKEN, BATCH_SIZE)
 
     data = StockData(stock)
 
@@ -99,6 +99,5 @@ if __name__ == '__main__':
     end_date = datetime.today()
     duration = end_date - start_date
     STOCK_VALIDATION_DATE = start_date + 0.8 * duration
-    GITHUB_URL = "https://github.com/JordiCorbilla/stock-prediction-deep-neural-learning/raw/master/"
     EPOCHS = 100
     app.run(main)

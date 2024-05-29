@@ -51,7 +51,14 @@ class StockData:
         data = data.reset_index()
         data.to_csv(os.path.join(project_folder, 'downloaded_data_'+self._stock.get_ticker()+'.csv'))
         #print(data)
+        return self.transform_numpy(data, time_steps)
 
+    def load_csv_transform_to_numpy(self, time_steps, csv_path):
+        data = pd.read_csv(csv_path)
+        data = data.reset_index()
+        return self.transform_numpy(data, time_steps)
+
+    def transform_numpy(self, data, time_steps):
         training_data = data[data['Date'] < self._stock.get_validation_date()].copy()
         test_data = data[data['Date'] >= self._stock.get_validation_date()].copy()
         training_data = training_data.set_index('Date')
