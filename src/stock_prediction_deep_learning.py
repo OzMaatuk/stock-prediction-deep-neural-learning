@@ -31,7 +31,7 @@ def train_LSTM_network(stock):
         # stock.get_start_date(),
         # stock.get_end_date(),
         # stock.get_validation_date())
-    csv_path = stock.get_project_folder() + "downloaded_data.csv"
+    csv_path = stock.get_project_folder() + "data.csv"
     (x_train, y_train), (x_test, y_test), (training_data, test_data) = data.load_csv_transform_to_numpy(stock.get_time_steps(), csv_path)
     plotter.plot_histogram_data_split(training_data, test_data, stock.get_validation_date())
 
