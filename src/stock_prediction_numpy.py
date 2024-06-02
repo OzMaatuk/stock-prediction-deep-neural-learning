@@ -24,7 +24,7 @@ class DataClass:
     def download_transform_to_numpy(self, ticker, time_steps, project_folder, start_date, end_date, validation_date):
         data = yf.download([ticker], start_date, end_date)[['Close']]
         data = data.reset_index()
-        data.to_csv(os.path.join(project_folder, 'downloaded_data.csv'))
+        data.to_csv(os.path.join(project_folder, 'data.csv'))
         #print(data)
         return self.transform_numpy(data, time_steps, validation_date)
 
