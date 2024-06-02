@@ -29,7 +29,7 @@ class DataClass:
         return self.transform_numpy(data, time_steps, validation_date)
 
     def load_csv_transform_to_numpy(self, time_steps, csv_path, validation_date):
-        data = pd.read_csv(csv_path, index_col=0)
+        data = pd.read_csv(csv_path) #, index_col=0)
         # data = data.reset_index()
         return self.transform_numpy(data, time_steps, validation_date)
 
