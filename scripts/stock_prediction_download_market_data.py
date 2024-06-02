@@ -18,19 +18,43 @@ import yfinance as yf
 import datetime
 
 # show data for different tickers
-start = pd.to_datetime('2004-08-01')
-stock = ['ETH-USD']
-data = yf.download(stock, start=start, end=datetime.date.today())
-print(data)
+start = pd.to_datetime('2024-05-24')
+end = pd.to_datetime('2024-05-31')
+stock = ['^GSPC']
+data = yf.download(stock, start=start, end=end, interval="1m")
+# print(data)
+data.to_csv('^GSPC_1_min.csv')
 
-stock = ['GOOG']
-data = yf.download(stock, start=start, end=datetime.date.today())
-print(data)
 
-stock = ['FB']
-data = yf.download(stock, start=start, end=datetime.date.today())
-print(data)
+# stock = ['GOOG']
+# data = yf.download(stock, start=start, end=end, interval="1m")
+# # print(data)
+# data.to_csv('GOOG_1_min.csv')
 
-stock = ['TSLA']
-data = yf.download(stock, start=start, end=datetime.date.today())
-print(data)
+
+# stock = ['TSLA']
+# data = yf.download(stock, start=start, end=datetime.date.today())
+# # print(data)
+# data.to_csv('TSLA_1_min.csv')
+
+
+# stock = ['HOOD']
+# data = yf.download(stock, start=start, end=datetime.date.today())
+# # print(data)
+# data.to_csv('HOOD_1_min.csv')
+
+
+
+# stock = ['JMIA']
+# data = yf.download(stock, start=start, end=datetime.date.today())
+# # print(data)
+# data.to_csv('JMIA_1_min.csv')
+
+
+
+# stock = ['TSEM']
+# data = yf.download(stock, start=start, end=datetime.date.today())
+# # print(data)
+# data.to_csv('TSEM_1_min.csv')
+
+
