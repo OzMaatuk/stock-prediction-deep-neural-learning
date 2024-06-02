@@ -26,6 +26,8 @@ class StockClass:
         self._batch_size = batch_size
         self._end_date = end_date
 
+# delete all getters
+
     def get_ticker(self):
         return self._ticker
 
