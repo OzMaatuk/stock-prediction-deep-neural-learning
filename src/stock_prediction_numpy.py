@@ -29,18 +29,18 @@ class DataClass:
         return self.transform_numpy(data, time_steps, validation_date)
 
     def load_csv_transform_to_numpy(self, time_steps, csv_path, validation_date):
-        data = pd.read_csv(csv_path) #, index_col=0)
+        data = pd.read_csv(csv_path, index_col=0)
         # data = data.reset_index()
         return self.transform_numpy(data, time_steps, validation_date)
 
     def transform_numpy(self, data, time_steps, validation_date):
-        date_col = pd.to_datetime(data['Date'])
-        data['Date'] = date_col
+        date_col = pd.to_datetime(data['Datetime'])
+        data['Datetime'] = date_col
         training_data = data[date_col < validation_date].copy()
         test_data = data[date_col >= validation_date].copy()
-        training_data = training_data.set_index('Date')
+        training_data = training_data.set_index('Datetime')
         # Set the data frame index using column Date
-        test_data = test_data.set_index('Date')
+        test_data = test_data.set_index('Datetime')
         #print(test_data)
 
         train_scaled = self.min_max.fit_transform(training_data)
@@ -101,8 +101,8 @@ class DataClass:
                 latest_close_price = 0
             y_future.append(latest_close_price)
 
-        test_data = pd.DataFrame({'Date': x_future, 'Close': y_future})
-        test_data = test_data.set_index('Date')
+        test_data = pd.DataFrame({'Datetime': x_future, 'Close': y_future})
+        test_data = test_data.set_index('Datetime')
 
         test_scaled = self.min_max.fit_transform(test_data)
         x_test = []

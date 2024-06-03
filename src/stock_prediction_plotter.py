@@ -33,11 +33,11 @@ class Plotter:
         plt.xlabel("Date")
         plt.legend(["Training Data", "Validation Data >= " + validation_date.strftime("%Y-%m-%d")])
         plt.title(self.short_name)
-        plt.savefig(os.path.join(self.project_folder, self.short_name.strip().replace('.', '') + '_price.png'))
+        plt.savefig(os.path.join(self.project_folder, 'price.png'))
 
         fig, ax = plt.subplots()
         training_data.hist(ax=ax)
-        fig.savefig(os.path.join(self.project_folder, self.short_name.strip().replace('.', '') + '_hist.png'))
+        fig.savefig(os.path.join(self.project_folder, 'hist.png'))
 
         plt.pause(0.001)
         plt.show(block=self.blocking)
@@ -75,6 +75,6 @@ class Plotter:
         plt.ylabel('Price [' + self.currency + ']')
         plt.legend()
         plt.title('Prediction')
-        plt.savefig(os.path.join(self.project_folder, self.short_name.strip().replace('.', '') + '_prediction.png'))
+        plt.savefig(os.path.join(self.project_folder, 'prediction.png'))
         plt.pause(0.001)
         plt.show(block=self.blocking)

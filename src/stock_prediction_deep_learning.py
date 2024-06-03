@@ -21,13 +21,13 @@ from src.stock_prediction_readme_generator import ReadmeGenerator
 
 
 def train_LSTM_network(data, stock, x_train, y_train, x_test, y_test, training_data, test_data):
-    plotter = Plotter(True, stock.project_folder(), stock.ticker(), data.get_stock_currency(), stock.ticker())
-    plotter.plot_histogram_data_split(training_data, test_data, stock.validation_date())
+    plotter = Plotter(True, stock.project_folder, stock.ticker, data.get_stock_currency(), stock.ticker)
+    plotter.plot_histogram_data_split(training_data, test_data, stock.validation_date)
 
-    lstm = LongShortTermMemory(stock.project_folder())
+    lstm = LongShortTermMemory(stock.project_folder)
     model = lstm.create_model(x_train)
     model.compile(optimizer='adam', loss='mean_squared_error', metrics=lstm.get_defined_metrics())
-    history = model.fit(x_train, y_train, epochs=stock.epochs(), batch_size=stock.batch_size(), validation_data=(x_test, y_test),
+    history = model.fit(x_train, y_train, epochs=stock.epochs, batch_size=stock.batch_size, validation_data=(x_test, y_test),
                         callbacks=[lstm.get_callback()])
     print("saving weights")
     model.save(os.path.join(stock.project_folder(), 'model_weights.keras'))
@@ -45,14 +45,14 @@ def train_LSTM_network(data, stock, x_train, y_train, x_test, y_test, training_d
     test_predictions_baseline = model.predict(x_test)
     test_predictions_baseline = data.min_max.inverse_transform(test_predictions_baseline)
     test_predictions_baseline = pd.DataFrame(test_predictions_baseline)
-    test_predictions_baseline.to_csv(os.path.join(stock.project_folder(), 'predictions.csv'))
+    test_predictions_baseline.to_csv(os.path.join(stock.project_folder, 'predictions.csv'))
 
-    test_predictions_baseline.rename(columns={0: stock.ticker() + '_predicted'}, inplace=True)
+    test_predictions_baseline.rename(columns={0: stock.ticker + '_predicted'}, inplace=True)
     test_predictions_baseline = test_predictions_baseline.round(decimals=0)
     test_predictions_baseline.index = test_data.index
     plotter.project_plot_predictions(test_predictions_baseline, test_data)
 
-    # generator = ReadmeGenerator(stock.project_folder(), stock.ticker())
+    # generator = ReadmeGenerator(stock.project_folder, stock.ticker)
     # generator.write()
 
     print("prediction is finished")
