@@ -20,41 +20,49 @@ import datetime
 # show data for different tickers
 start = pd.to_datetime('2024-05-24')
 end = pd.to_datetime('2024-05-31')
-stock = ['^GSPC']
-data = yf.download(stock, start=start, end=end, interval="1m")
-# print(data)
-data.to_csv('^GSPC_1_min.csv')
+
+
+# stock = ['^GSPC']
+# data = yf.download(stock, start=start, end=datetime.date.today())
+# data = yf.download(stock, start=start, end=end, interval="1m")
+# # print(data)
+# data.to_csv('^GSPC_1_min.csv')
 
 
 # stock = ['GOOG']
+# data = yf.download(stock, start=start, end=datetime.date.today())
 # data = yf.download(stock, start=start, end=end, interval="1m")
 # # print(data)
 # data.to_csv('GOOG_1_min.csv')
 
 
-# stock = ['TSLA']
+stock = ['TSLA']
 # data = yf.download(stock, start=start, end=datetime.date.today())
-# # print(data)
-# data.to_csv('TSLA_1_min.csv')
+data = yf.download(stock, start=start, end=end, interval="1m")
+# print(data)
+data.to_csv('TSLA_1_min.csv')
 
 
-# stock = ['HOOD']
+stock = ['HOOD']
 # data = yf.download(stock, start=start, end=datetime.date.today())
-# # print(data)
-# data.to_csv('HOOD_1_min.csv')
+data = yf.download(stock, start=start, end=end, interval="1m")
+# print(data)
+data.to_csv('HOOD_1_min.csv')
 
 
 
-# stock = ['JMIA']
+stock = ['JMIA']
 # data = yf.download(stock, start=start, end=datetime.date.today())
-# # print(data)
-# data.to_csv('JMIA_1_min.csv')
+data = yf.download(stock, start=start, end=end, interval="1m")
+# print(data)
+data.to_csv('JMIA_1_min.csv')
 
 
 
-# stock = ['TSEM']
+stock = ['TSEM']
 # data = yf.download(stock, start=start, end=datetime.date.today())
-# # print(data)
-# data.to_csv('TSEM_1_min.csv')
+data = yf.download(stock, start=start, end=end, interval="1m")
+# print(data)
+data.to_csv('TSEM_1_min.csv')
 
 
