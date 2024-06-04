@@ -30,7 +30,7 @@ def train_LSTM_network(data, stock, x_train, y_train, x_test, y_test, training_d
     history = model.fit(x_train, y_train, epochs=stock.epochs, batch_size=stock.batch_size, validation_data=(x_test, y_test),
                         callbacks=[lstm.get_callback()])
     print("saving weights")
-    model.save(os.path.join(stock.project_folder(), 'model_weights.keras'))
+    model.save(os.path.join(stock.project_folder, 'model_weights.keras'))
 
     plotter.plot_loss(history)
     plotter.plot_mse(history)

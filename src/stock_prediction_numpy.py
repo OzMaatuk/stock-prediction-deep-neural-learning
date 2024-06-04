@@ -24,12 +24,14 @@ class DataClass:
     def download_transform_to_numpy(self, ticker, time_steps, project_folder, start_date, end_date, validation_date):
         data = yf.download([ticker], start_date, end_date)[['Close']]
         data = data.reset_index()
+        # data.drop(columns=["Open","High","Low","Adj Close","Volume"], inplace=True)
         data.to_csv(os.path.join(project_folder, 'data.csv'))
         #print(data)
         return self.transform_numpy(data, time_steps, validation_date)
 
     def load_csv_transform_to_numpy(self, time_steps, csv_path, validation_date):
         data = pd.read_csv(csv_path, index_col=0)
+        data.drop(columns=["Open","High","Low","Adj Close","Volume"], inplace=True)
         # data = data.reset_index()
         return self.transform_numpy(data, time_steps, validation_date)
 
@@ -71,9 +73,17 @@ class DataClass:
         x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1], 1))
         return (x_train, y_train), (x_test, y_test), (training_data, test_data)
 
-    def __date_range(self, start_date, end_date):
-        for n in range(int((end_date - start_date).days)):
-            yield start_date + timedelta(n)
+    def calc_date_range(self, start_date, end_date):
+        is_start_day_is_full_day = True if (start_date.hour == start_date.minute == 0) else False
+        is_end_day_is_full_day = True if (end_date.hour == end_date.minute == 0) else False
+        is_day_interval = is_start_day_is_full_day and is_end_day_is_full_day
+        my_range = (end_date - start_date)
+        if (not is_day_interval):
+            range_in_seconds = my_range.total_seconds()
+            my_range = range_in_seconds / 60
+        for n in range(int(my_range)):
+            yield start_date + timedelta(minutes=n)
+
 
     def negative_positive_random(self):
         return 1 if random.random() < 0.5 else -1
@@ -90,7 +100,7 @@ class DataClass:
         # close price for a +-1-3% of the original value, when the value wants to go below
         # zero, it will be forced to go up.
 
-        for single_date in self.__date_range(start_date, end_date):
+        for single_date in self.calc_date_range(start_date, end_date):
             x_future.append(single_date)
             direction = self.negative_positive_random()
             random_slope = direction * (self.pseudo_random())
@@ -116,6 +126,3 @@ class DataClass:
         x_test, y_test = np.array(x_test), np.array(y_test)
         x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1], 1))
         return x_test, y_test, test_data
-
-
-
