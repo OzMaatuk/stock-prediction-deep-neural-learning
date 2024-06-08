@@ -2,3 +2,4 @@ __pycache__
 data
 notebooks
 models
+scripts/stock_prediction_download_market_data.py
