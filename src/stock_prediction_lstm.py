@@ -12,13 +12,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-import os
-import tensorflow as tf
+
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dropout, Dense
 from tensorflow.keras.layers import LSTM
 from tensorflow.keras.metrics import MeanSquaredError
 from tensorflow.keras.callbacks import EarlyStopping
+
+# TODO:
+# from tensorflow.keras.regularizers import l2
+
+# # Add this inside your LSTM layers
+# lstm_layer = LSTM(units, kernel_regularizer=l2(0.01), return_sequences=True)
+
+
+# from tensorflow.keras.layers import BatchNormalization
+
+# # Add this after your LSTM layers
+# batch_norm_layer = BatchNormalization()
+
+
+# from tensorflow.keras.callbacks import LearningRateScheduler
+
+# # Define the scheduler function
+# def scheduler(epoch, lr):
+#     if epoch < 10:
+#         return lr
+#     else:
+#         return lr * tf.math.exp(-0.1)
+
+# # Add this to your callbacks when fitting the model
+# lr_scheduler = LearningRateScheduler(scheduler)
+
+
+
 
 class LongShortTermMemory:
     def __init__(self, project_folder):
