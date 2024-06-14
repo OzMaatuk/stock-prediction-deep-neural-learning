@@ -18,51 +18,49 @@ import yfinance as yf
 import datetime
 
 # show data for different tickers
-start = pd.to_datetime('2017-06-07')
-end = pd.to_datetime('2024-06-07')
+start = pd.to_datetime('2024-06-07')
+end = pd.to_datetime('2024-06-14')
 
 
 stock = ['^GSPC']
-data = yf.download(stock, start=start, end=datetime.date.today())
-# data = yf.download(stock, start=start, end=end, interval="1m")
+# data = yf.download(stock, start=start, end=datetime.date.today())
+data = yf.download(stock, start=start, end=end, interval="1m")
 # print(data)
-data.to_csv('^GSPC_1_day.csv')
+data.to_csv('GSPC_3.csv')
 
 
 stock = ['GOOG']
-data = yf.download(stock, start=start, end=datetime.date.today())
-# data = yf.download(stock, start=start, end=end, interval="1m")
+# data = yf.download(stock, start=start, end=datetime.date.today())
+data = yf.download(stock, start=start, end=end, interval="1m")
 # print(data)
-data.to_csv('GOOG_1_day.csv')
+data.to_csv('GOOG_3.csv')
 
 
 stock = ['TSLA']
-data = yf.download(stock, start=start, end=datetime.date.today())
-# data = yf.download(stock, start=start, end=end, interval="1m")
+# data = yf.download(stock, start=start, end=datetime.date.today())
+data = yf.download(stock, start=start, end=end, interval="1m")
 # print(data)
-data.to_csv('TSLA_1_day.csv')
+data.to_csv('TSLA_3.csv')
 
 
 stock = ['HOOD']
-data = yf.download(stock, start=start, end=datetime.date.today())
-# data = yf.download(stock, start=start, end=end, interval="1m")
+# data = yf.download(stock, start=start, end=datetime.date.today())
+data = yf.download(stock, start=start, end=end, interval="1m")
 # print(data)
-data.to_csv('HOOD_1_day.csv')
+data.to_csv('HOOD_3.csv')
 
 
 
 stock = ['JMIA']
-data = yf.download(stock, start=start, end=datetime.date.today())
-# data = yf.download(stock, start=start, end=end, interval="1m")
+# data = yf.download(stock, start=start, end=datetime.date.today())
+data = yf.download(stock, start=start, end=end, interval="1m")
 # print(data)
-data.to_csv('JMIA_1_day.csv')
+data.to_csv('JMIA_3.csv')
 
 
 
 stock = ['TSEM']
-data = yf.download(stock, start=start, end=datetime.date.today())
-# data = yf.download(stock, start=start, end=end, interval="1m")
+# data = yf.download(stock, start=start, end=datetime.date.today())
+data = yf.download(stock, start=start, end=end, interval="1m")
 # print(data)
-data.to_csv('TSEM_1_day.csv')
-
-
+data.to_csv('TSEM_3.csv')
