@@ -41,20 +41,15 @@ files = [f for f in entries if os.path.isfile(os.path.join(DIR_PATH, f))]
 
 
 
-# files = ["GOOG_1.csv", "GSPC_1.csv"]
-
-
+files = ["GOOG_1.csv", "GOOG_2.csv", "GOOG_3.csv"]
 
 
 # combine csv files
-# for file_path in files:
-#     relative_file_path = DIR_PATH + file_path
-#     if (file_path.endswith("_1.csv")):
-#         df1 = pd.read_csv(relative_file_path)
-#         file2_path = relative_file_path[:-5] + "2.csv"
-#         df2 = pd.read_csv(file2_path)
-
-#         combined_df = pd.concat([df1, df2], ignore_index=True)
-#         output_fie_path = relative_file_path[:-6] + ".csv"
-#         combined_df.to_csv(output_fie_path, index=True)
-#         print(f"CSV files appended and saved to: {output_fie_path}")
+l = []
+for file_path in files:
+    relative_file_path = DIR_PATH + file_path
+    l.append(pd.read_csv(relative_file_path))
+combined_df = pd.concat(l, ignore_index=True)
+output_fie_path = DIR_PATH + "GOOG_COMB.csv"
+combined_df.to_csv(output_fie_path, index=True)
+print(f"CSV files appended and saved to: {output_fie_path}")
