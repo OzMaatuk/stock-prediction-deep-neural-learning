@@ -81,9 +81,12 @@ class DataClass:
         if (not is_day_interval):
             range_in_seconds = my_range.total_seconds()
             my_range = range_in_seconds / 60
-        for n in range(int(my_range)):
-            yield start_date + timedelta(minutes=n)
-
+            for n in range(int(my_range)):
+                yield start_date + timedelta(minutes=n)
+        else:
+            my_range = my_range.days
+            for n in range(int(my_range)):
+                yield start_date + timedelta(days=n)
 
     def negative_positive_random(self):
         return 1 if random.random() < 0.5 else -1
