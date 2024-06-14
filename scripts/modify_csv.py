@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 # Adding index column
-# CSV_FILE = 'data/min/TSLA.csv'
+# CSV_FILE = 'data/day/GOOG/data.csv'
 # data = pd.read_csv(CSV_FILE)
 # data.reset_index(inplace=True, drop=True)
 # data.to_csv(CSV_FILE)
@@ -14,9 +14,9 @@ import os
 
 
 # get all files in directory
-DIR_PATH = "data/backup/min/"
-entries = os.listdir(DIR_PATH)
-files = [f for f in entries if os.path.isfile(os.path.join(DIR_PATH, f))]
+# DIR_PATH = "data/backup/min/"
+# entries = os.listdir(DIR_PATH)
+# files = [f for f in entries if os.path.isfile(os.path.join(DIR_PATH, f))]
 
 # # remove column
 # for file_path in files:
@@ -41,15 +41,15 @@ files = [f for f in entries if os.path.isfile(os.path.join(DIR_PATH, f))]
 
 
 
-files = ["GOOG_1.csv", "GOOG_2.csv", "GOOG_3.csv"]
+# files = ["GOOG_1.csv", "GOOG_2.csv", "GOOG_3.csv"]
 
 
-# combine csv files
-l = []
-for file_path in files:
-    relative_file_path = DIR_PATH + file_path
-    l.append(pd.read_csv(relative_file_path))
-combined_df = pd.concat(l, ignore_index=True)
-output_fie_path = DIR_PATH + "GOOG_COMB.csv"
-combined_df.to_csv(output_fie_path, index=True)
-print(f"CSV files appended and saved to: {output_fie_path}")
+# # combine csv files
+# l = []
+# for file_path in files:
+#     relative_file_path = DIR_PATH + file_path
+#     l.append(pd.read_csv(relative_file_path))
+# combined_df = pd.concat(l, ignore_index=True)
+# output_fie_path = DIR_PATH + "GOOG_COMB.csv"
+# combined_df.to_csv(output_fie_path, index=True)
+# print(f"CSV files appended and saved to: {output_fie_path}")
