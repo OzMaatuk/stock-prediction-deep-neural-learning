@@ -53,3 +53,16 @@ import os
 # output_fie_path = DIR_PATH + "GOOG_COMB.csv"
 # combined_df.to_csv(output_fie_path, index=True)
 # print(f"CSV files appended and saved to: {output_fie_path}")
+
+
+# combine min data and day data
+# MIN_CSV_FILE = 'data/min/GOOG/data.csv'
+# DAY_CSV_FILE = 'data/day/GOOG/data.csv'
+# min_data = pd.read_csv(MIN_CSV_FILE, index_col=0)
+# day_data = pd.read_csv(DAY_CSV_FILE, index_col=0)
+# day_data['Datetime'] = day_data['Datetime'] + " 15:59:00"
+# l = [day_data, min_data]
+# combined_df = pd.concat(l, ignore_index=True)
+# output_fie_path = "GOOG_COMB.csv"
+# combined_df.to_csv(output_fie_path, index=True)
+# print(f"CSV files appended and saved to: {output_fie_path}")
