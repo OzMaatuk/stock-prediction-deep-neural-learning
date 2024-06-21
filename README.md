@@ -8,22 +8,12 @@ The project is organized as follows:
 
 ```
 └── src
-    └── InferLstmModel.py
     └── LongShortTermMemory.py
     └── StockDataProcessor.py
     └── StockDataVisualizer.py
     └── StockPredictionConfig.py
     └── TrainLstmNetwork.py
     └── __init__.py
-    └── __pycache__
-        └── Infer.cpython-311.pyc
-        └── InferLstmModel.cpython-311.pyc
-        └── LongShortTermMemory.cpython-311.pyc
-        └── StockDataProcessor.cpython-311.pyc
-        └── StockDataVisualizer.cpython-311.pyc
-        └── StockPredictionConfig.cpython-311.pyc
-        └── TrainLstmNetwork.cpython-311.pyc
-        └── __init__.cpython-311.pyc
 ```
 
 ### Dependencies
@@ -67,7 +57,7 @@ The `StockDataProcessor` class handles data loading, preprocessing, and transfor
 
 ### Model Training
 
-The `TrainLstmNetwork` function in `TrainLstmNetwork.py` trains the LSTM model:
+The `TrainLstmNetwork` function in `LstmNetwork.py` trains the LSTM model:
 
 - **Loads data:** Reads historical stock data.
 - **Creates the model:** Builds the LSTM model.
@@ -78,7 +68,7 @@ The `TrainLstmNetwork` function in `TrainLstmNetwork.py` trains the LSTM model:
 
 ### Prediction
 
-The `InferLstmModel` function in `InferLstmModel.py` loads the trained model and predicts future stock prices:
+The `InferLstmModel` function in `LstmNetwork.py` loads the trained model and predicts future stock prices:
 
 - **Loads model weights:** Loads the saved model weights.
 - **Generates future data:** Simulates future stock data.
@@ -123,7 +113,7 @@ To use the project:
    end_date = pd.to_datetime("2024-06-14 15:59:00")
    latest_close_price = 120.00  # Replace with the actual latest close price
 
-   InferLstmModel.InferLstmModel(start_date, end_date, latest_close_price, WORK_DIR, TIME_STEPS, STOCK_TICKER, "USD") 
+   LstmNetwork.InferLstmModel(start_date, end_date, latest_close_price, WORK_DIR, TIME_STEPS, STOCK_TICKER, "USD") 
    ```
 
 ### Visualizations
