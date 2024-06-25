@@ -32,6 +32,8 @@ You can install these dependencies using `pip`:
 pip install tensorflow pandas numpy matplotlib yfinance
 ```
 
+Prefer to use the `environment.yaml` file and setting up python conda GPU container.
+
 ### Configuration
 
 The configuration parameters for the project are stored in the `StockPredictionConfig` class. These parameters include:
@@ -126,15 +128,6 @@ The project includes various visualizations:
 - **Predictions:** Plots the predicted prices against the actual or simulated prices.
 - **Future predictions:** Plots predicted future prices against simulated prices.
 
-### Notes
+### Hyperparameter Tuning
 
-- The model's performance and accuracy depend on various factors, including the quality and quantity of data, the model architecture, and the hyperparameters used. 
-- This project provides a basic framework for stock prediction. You can enhance it by:
-    - Adding more features (e.g., technical indicators, news sentiment).
-    - Experimenting with different model architectures.
-    - Tuning hyperparameters using techniques like grid search or Bayesian optimization.
-    - Implementing more advanced data processing techniques.
-
-Let me know if you have any questions or need further assistance with this project. 
-
-
+The project includes a separate notebook (`hyper_tuning.ipynb`) dedicated to hyperparameter tuning for the LSTM model. This notebook uses scikit-learn's `GridSearchCV` or `RandomizedSearchCV` to find the best combination of hyperparameters for improved model performance.
