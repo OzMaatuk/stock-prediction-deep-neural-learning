@@ -1,27 +1,12 @@
 import os
-import warnings
 import pandas as pd
 
-from tensorflow.keras import Sequential
-from tensorflow.keras.layers import Dropout, Dense
-from tensorflow.keras.layers import LSTM
-from tensorflow.keras.metrics import MeanSquaredError
-from tensorflow.keras.callbacks import EarlyStopping
-from tensorflow.keras.optimizers import Adam, RMSprop, SGD
-
-from scikeras.wrappers import KerasRegressor  # Use KerasRegressor for regression
+from scikeras.wrappers import KerasRegressor
 from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import RandomizedSearchCV  # Option for RandomizedSearchCV
-from sklearn.base import RegressorMixin
+from sklearn.model_selection import RandomizedSearchCV
 
 from src.StockDataProcessor import StockDataProcessor
-from src.LongShortTermMemory import LongShortTermMemory  # Import the class
-
-# Suppress TensorFlow warnings
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or '3' to suppress all messages
-
-# Suppress other warnings
-warnings.filterwarnings("ignore", category=UserWarning, module="tensorflow")
+from src.LongShortTermMemory import LongShortTermMemory
 
 # %%
 FOLDER_PREFIX = "data/min/"
@@ -49,8 +34,8 @@ param_grid = {
     'model__dropout': [0.2, 0.3, 0.4],
     'model__activation': ['relu', 'tanh', 'sigmoid'],
     'model__optimizer': ['adam', 'rmsprop', 'sgd'],
-    'batch_size': [10, 20, 30, 40],  # Add batch size to the grid
-    'epochs': [50, 100, 150]  # Add epochs to the grid
+    'model__batch_size': [10, 20, 30, 40],
+    'model__epochs': [50, 100, 150]
 }
 
 # %%
@@ -74,7 +59,7 @@ def create_model(units=100, dropout=0.2, activation='relu', optimizer='adam'):
     # * units = add 100 neurons is the dimensionality of the output space
     # * return_sequences = True to stack LSTM layers so the next LSTM layer has a three-dimensional sequence input
     # * input_shape => Shape of the training dataset
-    model.add(LSTM(units=units, return_sequences=True, input_shape=(x_train.shape[1], 1)))
+    model.add(LSTM(units=units, return_sequences=True)
     # 20% of the layers will be dropped
     model.add(Dropout(dropout))
     # 2nd LSTM layer
@@ -111,12 +96,12 @@ def create_model(units=100, dropout=0.2, activation='relu', optimizer='adam'):
 
 # %%
 # Create the KerasRegressor
-model = KerasRegressor(build_fn=create_model, verbose=0)
+model = KerasRegressor(model=create_model, verbose=0)
 
 # Create the GridSearchCV object
-grid = GridSearchCV(estimator=model, param_grid=param_grid, cv=3, n_jobs=1)  # Use GridSearchCV
+# grid = GridSearchCV(estimator=model, param_grid=param_grid, cv=3, n_jobs=1)  # Use GridSearchCV
 # OR
-# grid = RandomizedSearchCV(estimator=model, param_distributions=param_grid, cv=3, n_jobs=-1)  # Use RandomizedSearchCV
+grid = RandomizedSearchCV(estimator=model, param_distributions=param_grid, cv=3, n_jobs=-1)  # Use RandomizedSearchCV
 
 # Fit the GridSearchCV to the data
 grid_result = grid.fit(x_train, y_train)
