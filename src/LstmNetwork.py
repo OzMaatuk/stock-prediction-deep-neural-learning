@@ -27,7 +27,7 @@ def TrainLstmNetwork(stock_config: StockPredictionConfig, x_train, y_train, x_te
 
     # Create and train LSTM model
     lstm = LongShortTermMemory(stock_config.project_folder)
-    model = lstm.create_model(x_train)
+    model = lstm.create_model()
     model.compile(optimizer='adam', loss='mean_squared_error', metrics=lstm.get_defined_metrics())
     history = model.fit(x_train, y_train,
                         epochs=stock_config.epochs,
