@@ -6,7 +6,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import RandomizedSearchCV
 
 from src.StockDataProcessor import StockDataProcessor
-from src.LongShortTermMemory import LongShortTermMemory
+from src.LongShortTermMemory import LSTMModel
 
 # %%
 FOLDER_PREFIX = "data/min/"
@@ -26,7 +26,7 @@ if not os.path.exists(PROJECT_FOLDER):
 (x_train, y_train), (x_test, y_test), (training_data, test_data) = StockDataProcessor.load_csv_transform_to_numpy(TIME_STEPS, CSV_FILE, STOCK_VALIDATION_DATE)
 
 # %%
-lstm = LongShortTermMemory(PROJECT_FOLDER)
+lstm = LSTMModel(PROJECT_FOLDER)
 
 # Define the parameter grid for the search
 param_grid = {

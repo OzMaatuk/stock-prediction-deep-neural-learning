@@ -12,7 +12,6 @@ The project is organized as follows:
     └── StockDataProcessor.py
     └── StockDataVisualizer.py
     └── StockPredictionConfig.py
-    └── TrainLstmNetwork.py
     └── __init__.py
 ```
 
@@ -59,7 +58,7 @@ The `StockDataProcessor` class handles data loading, preprocessing, and transfor
 
 ### Model Training
 
-The `TrainLstmNetwork` function in `LstmNetwork.py` trains the LSTM model:
+The `TrainLstmNetwork` function in `LongShortTermMemory.py` trains the LSTM model:
 
 - **Loads data:** Reads historical stock data.
 - **Creates the model:** Builds the LSTM model.
@@ -70,7 +69,7 @@ The `TrainLstmNetwork` function in `LstmNetwork.py` trains the LSTM model:
 
 ### Prediction
 
-The `InferLstmModel` function in `LstmNetwork.py` loads the trained model and predicts future stock prices:
+The `InferLstmModel` function in `LongShortTermMemory.py` loads the trained model and predicts future stock prices:
 
 - **Loads model weights:** Loads the saved model weights.
 - **Generates future data:** Simulates future stock data.
@@ -90,7 +89,7 @@ To use the project:
    ```python
    from src import StockPredictionConfig
    from src import StockDataProcessor
-   from src import TrainLstmNetwork
+   from src import LSTMN
 
    stock_config = StockPredictionConfig(
        ticker="GOOG",
@@ -103,19 +102,19 @@ To use the project:
    )
 
    data_processor = StockDataProcessor()
-   TrainLstmNetwork.TrainLstmNetwork(stock_config, x_train, y_train, x_test, y_test, training_data, test_data)
+   LSTMN.TrainLstmNetwork(stock_config, x_train, y_train, x_test, y_test, training_data, test_data)
    ```
 
 3. **Run `InferLstmModel` to make predictions:**
    ```python
    from src import StockDataProcessor
-   from src import InferLstmModel
+   from src import LSTMN
 
    start_date = pd.to_datetime("2024-06-13 09:30:00")
    end_date = pd.to_datetime("2024-06-14 15:59:00")
    latest_close_price = 120.00  # Replace with the actual latest close price
 
-   LstmNetwork.InferLstmModel(start_date, end_date, latest_close_price, WORK_DIR, TIME_STEPS, STOCK_TICKER, "USD") 
+   LSTMN.InferLstmModel(start_date, end_date, latest_close_price, WORK_DIR, TIME_STEPS, STOCK_TICKER, "USD") 
    ```
 
 ### Visualizations

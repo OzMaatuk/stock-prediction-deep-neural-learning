@@ -1,3 +1,13 @@
+import os
+import tensorflow as tf
+import pandas as pd
+
+from src.LongShortTermMemory import LSTMModel
+from src.StockDataVisualizer import StockDataVisualizer
+from src.StockPredictionConfig import StockPredictionConfig
+from src.StockDataProcessor import StockDataProcessor
+
+
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dropout, Dense
 from tensorflow.keras.layers import LSTM
@@ -5,33 +15,7 @@ from tensorflow.keras.metrics import MeanSquaredError
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Adam, RMSprop, SGD
 
-# TODO:
-# from tensorflow.keras.regularizers import l2
-
-# # Add this inside your LSTM layers
-# lstm_layer = LSTM(units, kernel_regularizer=l2(0.01), return_sequences=True)
-
-
-# from tensorflow.keras.layers import BatchNormalization
-
-# # Add this after your LSTM layers
-# batch_norm_layer = BatchNormalization()
-
-
-# from tensorflow.keras.callbacks import LearningRateScheduler
-
-# # Define the scheduler function
-# def scheduler(epoch, lr):
-#     if epoch < 10:
-#         return lr
-#     else:
-#         return lr * tf.math.exp(-0.1)
-
-# # Add this to your callbacks when fitting the model
-# lr_scheduler = LearningRateScheduler(scheduler)
-
-
-class LongShortTermMemory:
+class LSTMModel:
     def __init__(self, project_folder):
         self.project_folder = project_folder
 
@@ -45,7 +29,8 @@ class LongShortTermMemory:
         callback = EarlyStopping(monitor='val_loss', patience=3, mode='min', verbose=1)
         return callback
 
-    def create_model(units=100, dropout=0.2, activation='relu', optimizer='adam'):
+    @staticmethod
+    def create(units=100, dropout=0.2, activation='relu', optimizer='adam'):
         """
         Creates the LSTM model with specified hyperparameters.
 
@@ -65,7 +50,7 @@ class LongShortTermMemory:
         # * units = add 100 neurons is the dimensionality of the output space
         # * return_sequences = True to stack LSTM layers so the next LSTM layer has a three-dimensional sequence input
         # * input_shape => Shape of the training dataset
-        model.add(LSTM(units=units, return_sequences=True)
+        model.add(LSTM(units=units, return_sequences=True))
         # 20% of the layers will be dropped
         model.add(Dropout(dropout))
         # 2nd LSTM layer
@@ -99,3 +84,96 @@ class LongShortTermMemory:
 
         model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=MeanSquaredError(name='MSE'))
         return model
+
+
+    @staticmethod
+    def Train(stock_config: StockPredictionConfig, x_train, y_train, x_test, y_test, training_data, test_data) -> None:
+        """
+        Trains the LSTM network, saves the model weights, and evaluates its performance.
+
+        Args:
+            stock_config: The configuration settings for the stock prediction project.
+            data_processor: The data processor for loading and transforming stock data.
+        """
+
+        # Load and transform data
+        (x_train, y_train), (x_test, y_test), (training_data, test_data) = \
+            StockDataProcessor.load_csv_transform_to_numpy(
+                stock_config.time_steps,
+                stock_config.CSV_FILE,
+                stock_config.validation_date
+            )
+
+        # Create and train LSTM model
+        lstm = LSTMModel(stock_config.project_folder)
+        model = lstm.create()
+        model.compile(optimizer='adam', loss='mean_squared_error', metrics=lstm.get_defined_metrics())
+        history = model.fit(x_train, y_train,
+                            epochs=stock_config.epochs,
+                            batch_size=stock_config.batch_size,
+                            validation_data=(x_test, y_test),
+                            callbacks=[lstm.get_callback()])
+
+        # Save model weights
+        print("saving weights")
+        model.save(os.path.join(stock_config.project_folder, 'model_weights.keras'))
+
+        # Evaluate model performance
+        lstm.evaluate(model, x_test, y_test)
+
+        # Plot results
+        StockDataVisualizer.plot_results(stock_config, history, training_data, test_data, model, x_test)
+
+        print("prediction is finished")
+
+
+    @staticmethod
+    def evaluate(model, x_test, y_test):
+        """
+        Evaluates the trained model on the test data.
+
+        Args:
+            model: The trained LSTM model.
+            x_test: The testing data for the LSTM model.
+            y_test: The target values for the testing data.
+        """
+
+        print("display the content of the model")
+        baseline_results = model.evaluate(x_test, y_test, verbose=2)
+        for name, value in zip(model.metrics_names, baseline_results):
+            print(name, ': ', value)
+        print()
+
+
+
+    @staticmethod
+    def Infer(start_date, end_date, latest_close_price, work_dir, time_steps, ticker, currency):
+        
+        x_test, y_test, test_data = StockDataProcessor.generate_future_data(time_steps, start_date, end_date, latest_close_price)
+
+        # Check if the future data is not empty
+        if x_test.shape[0] > 0:
+            # load the weights from our best model
+            model = tf.keras.models.load_model(os.path.join(work_dir, 'model_weights.keras'))
+            model.summary()
+
+            # perform a prediction
+            test_predictions_baseline = model.predict(x_test)
+            test_predictions_baseline = StockDataProcessor.min_max.inverse_transform(test_predictions_baseline)
+            test_predictions_baseline = pd.DataFrame(test_predictions_baseline, columns=['Predicted_Price'])
+
+            # Combine the predicted values with dates from the test data
+            predicted_dates = pd.date_range(start=test_data.index[0], periods=len(test_predictions_baseline))
+            # predicted_dates = pd.date_range(start=test_data.index[0], periods=len(test_predictions_baseline), freq="1min")
+            test_predictions_baseline['Datetime'] = predicted_dates
+            
+            # Reset the index for proper concatenation
+            test_data.reset_index(inplace=True)
+            
+            # Concatenate the test_data and predicted data
+            combined_data = pd.concat([test_data, test_predictions_baseline], ignore_index=True)
+            
+            # Plotting predictions
+            StockDataVisualizer.plot_future(combined_data, work_dir, ticker, currency)
+        else:
+            print("Error: Future data is empty.")
