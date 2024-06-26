@@ -34,7 +34,7 @@ param_grid = {
     'model__dropout': [0.2, 0.3, 0.4],
     'model__activation': ['relu', 'tanh', 'sigmoid'],
     'model__optimizer': ['adam', 'rmsprop', 'sgd'],
-    'model__batch_size': [10, 20, 30, 40],
+    'model__batch_size': [5, 10, 20, 40],
     'model__epochs': [50, 100, 150]
 }
 
