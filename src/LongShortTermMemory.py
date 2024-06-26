@@ -2,7 +2,7 @@ import os
 import tensorflow as tf
 import pandas as pd
 
-from src.LongShortTermMemory import LSTMModel
+
 from src.StockDataVisualizer import StockDataVisualizer
 from src.StockPredictionConfig import StockPredictionConfig
 from src.StockDataProcessor import StockDataProcessor
@@ -11,23 +11,41 @@ from src.StockDataProcessor import StockDataProcessor
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dropout, Dense
 from tensorflow.keras.layers import LSTM
-from tensorflow.keras.metrics import MeanSquaredError
+from tensorflow.keras.metrics import MeanSquaredError # RootMeanSquaredError, MeanAbsoluteError
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Adam, RMSprop, SGD
+# from tensorflow.keras.regularizers import l1, l2
+# from tensorflow.keras.layers import BatchNormalization
+# from tensorflow.keras.callbacks import LearningRateScheduler
 
 class LSTMModel:
     def __init__(self, project_folder):
         self.project_folder = project_folder
 
     def get_defined_metrics(self):
-        defined_metrics = [
-            MeanSquaredError(name='MSE')
-        ]
-        return defined_metrics
+        return [MeanSquaredError(name='MSE')]
+    
+        # Can also add more metrics, for example:
+        # return [
+        #     MeanSquaredError(name='MSE'),
+        #     RootMeanSquaredError(),
+        #     MeanAbsoluteError() 
+        # ]
 
-    def get_callback(self):
-        callback = EarlyStopping(monitor='val_loss', patience=3, mode='min', verbose=1)
-        return callback
+    def get_callbacks(self):
+        callback = EarlyStopping(monitor='val_loss', patience=3, mode='min', verbose=1) # kernel_regularizer, recurrent_regularizer
+        return [callback]
+    
+        # Can also add LearningRateScheduler to callbacks, for example:
+        # def scheduler(epoch, lr):
+        #     if epoch < 10:  # Initial decay phase
+        #         return lr * 0.95 ** epoch # Exponential decay
+        #     else:
+        #         return lr * 0.99  # Slower linear decay
+        # lr_scheduler = LearningRateScheduler(scheduler)
+
+        # return [early_stopping, lr_scheduler]  # Return both callbacks
+
 
     @staticmethod
     def create(units=100, dropout=0.2, activation='relu', optimizer='adam'):
@@ -73,6 +91,13 @@ class LSTMModel:
         # Dense layer that specifies an output of one unit
         model.add(Dense(units=1, activation=activation))
 
+        # Can also add Regularization to the LSTM layer
+        # kernel_regularizer=l2(kernel_regularizer), 
+        # OR / AND
+        # recurrent_regularizer=l1(recurrent_regularizer),
+        # OR / AND add batch Normalization layer after LSTM layer 
+        # model.add(BatchNormalization())
+
         if optimizer == 'adam':
             optimizer = Adam()
         elif optimizer == 'rmsprop':
@@ -112,7 +137,7 @@ class LSTMModel:
                             epochs=stock_config.epochs,
                             batch_size=stock_config.batch_size,
                             validation_data=(x_test, y_test),
-                            callbacks=[lstm.get_callback()])
+                            callbacks=lstm.get_callbacks())
 
         # Save model weights
         print("saving weights")
