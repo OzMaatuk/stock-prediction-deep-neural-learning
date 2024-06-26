@@ -5,10 +5,6 @@ class StockPredictionConfig:
     Holds configuration parameters for the stock prediction project.
     """
 
-    DATE_FORMAT = "%Y-%m-%d"
-    CSV_FILE = None
-    CURRENCY = "USD"
-
     def __init__(self, 
                  ticker: str, 
                  start_date: datetime, 
@@ -17,7 +13,7 @@ class StockPredictionConfig:
                  project_folder: str, 
                  epochs: int = 100, 
                  time_steps: int = 60, 
-                 token: str = "GOOG", 
+                 token: str = "", 
                  batch_size: int = 10):
         """
         Initializes the StockPredictionConfig object with configuration parameters.

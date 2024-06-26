@@ -174,8 +174,7 @@ class LSTMModel:
 
 
     @staticmethod
-    def Infer(start_date, end_date, latest_close_price, work_dir, time_steps, ticker, currency):
-        
+    def Infer(start_date, end_date, latest_close_price, work_dir, time_steps):
         x_test, y_test, test_data = StockDataProcessor.generate_future_data(time_steps, start_date, end_date, latest_close_price)
 
         # Check if the future data is not empty
@@ -203,6 +202,6 @@ class LSTMModel:
             combined_data = pd.concat([test_data, test_predictions_baseline], ignore_index=True)
             
             # Plotting predictions
-            StockDataVisualizer.plot_future(combined_data, work_dir, ticker, currency)
+            StockDataVisualizer.plot_future(combined_data, work_dir)
         else:
             print("Error: Future data is empty.")

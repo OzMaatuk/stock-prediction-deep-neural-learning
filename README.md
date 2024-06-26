@@ -114,7 +114,7 @@ To use the project:
    end_date = pd.to_datetime("2024-06-14 15:59:00")
    latest_close_price = 120.00  # Replace with the actual latest close price
 
-   LSTMN.InferLstmModel(start_date, end_date, latest_close_price, WORK_DIR, TIME_STEPS, STOCK_TICKER, "USD") 
+   LSTMN.InferLstmModel(start_date, end_date, latest_close_price, WORK_DIR, TIME_STEPS, STOCK_TICKER, CURRENCY) 
    ```
 
 ### Visualizations

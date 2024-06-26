@@ -16,8 +16,8 @@ class StockDataVisualizer:
                                   test_data: pd.DataFrame, 
                                   validation_date: datetime, 
                                   project_folder: str, 
-                                  short_name: str, 
-                                  currency: str) -> None:
+                                  short_name: str = "", 
+                                  currency: str = "") -> None:
         """
         Plots the initial data split (training and validation data) and saves a histogram.
 
@@ -93,8 +93,8 @@ class StockDataVisualizer:
     def plot_predictions(price_predicted: pd.DataFrame, 
                                  test_data: pd.DataFrame, 
                                  project_folder: str, 
-                                 stock_ticker: str, 
-                                 currency: str) -> None:
+                                 stock_ticker: str = "", 
+                                 currency: str = "") -> None:
         """
         Plots the predicted stock prices against the actual prices or simulated prices.
 
@@ -103,9 +103,7 @@ class StockDataVisualizer:
             test_data: The original testing DataFrame or simulated data DataFrame.
             project_folder: The path to the project folder.
             stock_ticker: The stock ticker symbol.
-            short_name: The short name of the stock (e.g., "GOOG").
             currency: The currency of the stock (e.g., "USD").
-            plot_type: The type of plot to create. Can be 'actual_vs_predicted' or 'simulated_vs_predicted'.
         """
 
         print("plotting predictions")
@@ -127,8 +125,8 @@ class StockDataVisualizer:
     @staticmethod
     def plot_future(combined_data: pd.DataFrame, 
                     project_folder: str, 
-                    short_name: str, 
-                    currency: str) -> None:
+                    short_name: str = "",
+                    currency: str = "") -> None:
         """
         Plots the predicted future stock prices against the simulated prices.
 
@@ -136,7 +134,7 @@ class StockDataVisualizer:
             combined_data: The DataFrame containing both simulated and predicted prices.
             project_folder: The path to the project folder.
             stock_ticker: The stock ticker symbol.
-            short_name: The short name of the stock (e.g., "GOOG").
+            name: The short name of the stock (e.g., "GOOG").
             currency: The currency of the stock (e.g., "USD").
         """
 
@@ -172,9 +170,10 @@ class StockDataVisualizer:
             x_test: The testing data for the LSTM model.
         """
 
-        StockDataVisualizer.plot_histogram_data_split(training_data, test_data, stock_config.validation_date,
-                                                     stock_config.project_folder, stock_config.ticker,
-                                                     stock_config.CURRENCY)
+        StockDataVisualizer.plot_histogram_data_split(training_data,
+                                                      test_data,
+                                                      stock_config.validation_date,
+                                                      stock_config.project_folder)
         StockDataVisualizer.plot_loss(history, stock_config.project_folder)
         StockDataVisualizer.plot_mse(history, stock_config.project_folder)
 
@@ -186,4 +185,4 @@ class StockDataVisualizer:
 
         test_predictions_baseline = test_predictions_baseline.round(decimals=0)
         test_predictions_baseline.index = test_data.index
-        StockDataVisualizer.plot_predictions(test_predictions_baseline, test_data, stock_config.project_folder, stock_config.ticker, stock_config.CURRENCY)
+        StockDataVisualizer.plot_predictions(test_predictions_baseline, test_data, stock_config.project_folder)
