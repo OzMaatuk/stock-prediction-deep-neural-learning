@@ -159,9 +159,16 @@ class StockDataProcessor:
 
         return np.array(x), np.array(y)
 
+
     @staticmethod
-    def calc_date_range(start_date: datetime, 
-                        end_date: datetime) -> list[datetime]:
+    def is_day_interval(start_date: datetime, end_date: datetime) -> bool:
+        is_start_day_is_full_day = True if (start_date.hour == start_date.minute == 0) else False
+        is_end_day_is_full_day = True if (end_date.hour == end_date.minute == 0) else False
+        is_day_interval = is_start_day_is_full_day and is_end_day_is_full_day
+        return is_day_interval
+
+    @staticmethod
+    def calc_date_range(start_date: datetime, end_date: datetime) -> list[datetime]:
         """
         Calculates a list of dates between the start and end dates.
 
@@ -173,9 +180,7 @@ class StockDataProcessor:
             list[datetime]: A list of dates between the start and end dates.
         """
 
-        is_start_day_is_full_day = True if (start_date.hour == start_date.minute == 0) else False
-        is_end_day_is_full_day = True if (end_date.hour == end_date.minute == 0) else False
-        is_day_interval = is_start_day_is_full_day and is_end_day_is_full_day
+        is_day_interval = StockDataProcessor.is_day_interval(start_date, end_date)
         date_range = []
         if (not is_day_interval):
             my_range = (end_date - start_date).total_seconds() / 60

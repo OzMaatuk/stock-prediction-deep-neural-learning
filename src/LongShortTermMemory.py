@@ -22,7 +22,8 @@ class LSTMModel:
     def __init__(self, project_folder):
         self.project_folder = project_folder
 
-    def get_defined_metrics(self):
+    @staticmethod
+    def get_metrics():
         return [MeanSquaredError(name='MSE')]
     
         # Can also add more metrics, for example:
@@ -32,7 +33,8 @@ class LSTMModel:
         #     MeanAbsoluteError() 
         # ]
 
-    def get_callbacks(self):
+    @staticmethod
+    def get_callbacks():
         callback = EarlyStopping(monitor='val_loss', patience=3, mode='min', verbose=1) # kernel_regularizer, recurrent_regularizer
         return [callback]
     
@@ -107,7 +109,7 @@ class LSTMModel:
         else:
             raise ValueError(f"Invalid optimizer: {optimizer}. Choose from 'adam', 'rmsprop', or 'sgd'.")
 
-        model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=MeanSquaredError(name='MSE'))
+        model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=LSTMModel.get_metrics())
         return model
 
 
@@ -132,7 +134,7 @@ class LSTMModel:
         # Create and train LSTM model
         lstm = LSTMModel(stock_config.project_folder)
         model = lstm.create()
-        model.compile(optimizer='adam', loss='mean_squared_error', metrics=lstm.get_defined_metrics())
+        model.compile(optimizer='adam', loss='mean_squared_error', metrics=lstm.get_metrics())
         history = model.fit(x_train, y_train,
                             epochs=stock_config.epochs,
                             batch_size=stock_config.batch_size,
@@ -188,8 +190,10 @@ class LSTMModel:
             test_predictions_baseline = pd.DataFrame(test_predictions_baseline, columns=['Predicted_Price'])
 
             # Combine the predicted values with dates from the test data
-            predicted_dates = pd.date_range(start=test_data.index[0], periods=len(test_predictions_baseline))
-            # predicted_dates = pd.date_range(start=test_data.index[0], periods=len(test_predictions_baseline), freq="1min")
+            if (StockDataProcessor.is_day_interval(start_date, end_date)):
+                predicted_dates = pd.date_range(start=test_data.index[0], periods=len(test_predictions_baseline))
+            else:
+                predicted_dates = pd.date_range(start=test_data.index[0], periods=len(test_predictions_baseline), freq="1min")
             test_predictions_baseline['Datetime'] = predicted_dates
             
             # Reset the index for proper concatenation
