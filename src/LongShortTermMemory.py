@@ -8,7 +8,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 
 from src.StockDataVisualizer import StockDataVisualizer
-from src.StockPredictionConfig import StockPredictionConfig
 from src.StockDataProcessor import StockDataProcessor
 
 

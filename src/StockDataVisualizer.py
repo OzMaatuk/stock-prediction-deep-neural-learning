@@ -1,10 +1,8 @@
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
-import datetime
 import logging
 
-from src.StockPredictionConfig import StockPredictionConfig 
 from src.StockDataProcessor import StockDataProcessor 
 
 # Configure logging
