@@ -11,13 +11,13 @@ The project is organized as follows:
     └── LongShortTermMemory.py
     └── StockDataProcessor.py
     └── StockDataVisualizer.py
-    └── StockPredictionConfig.py
+    └── StockPredictionConfig.py (Deprecated)
     └── __init__.py
 ```
 
 ### Dependencies
 
-The following Python libraries are required for this project:
+The following Python libraries are mainly required for this project:
 
 - **tensorflow**
 - **pandas**
@@ -35,6 +35,7 @@ Prefer to use the `environment.yaml` file and setting up python conda GPU contai
 
 ### Configuration
 
+**Class been deprecated, but parameters are still used outside a class context.**
 The configuration parameters for the project are stored in the `StockPredictionConfig` class. These parameters include:
 
 - **`ticker`:** The stock ticker symbol (e.g., "GOOG").
@@ -58,7 +59,7 @@ The `StockDataProcessor` class handles data loading, preprocessing, and transfor
 
 ### Model Training
 
-The `TrainLstmNetwork` function in `LongShortTermMemory.py` trains the LSTM model:
+The `train` function in `LongShortTermMemory.py` trains the LSTM model:
 
 - **Loads data:** Reads historical stock data.
 - **Creates the model:** Builds the LSTM model.
@@ -69,7 +70,7 @@ The `TrainLstmNetwork` function in `LongShortTermMemory.py` trains the LSTM mode
 
 ### Prediction
 
-The `InferLstmModel` function in `LongShortTermMemory.py` loads the trained model and predicts future stock prices:
+The `infer` function in `LongShortTermMemory.py` loads the trained model and predicts future stock prices:
 
 - **Loads model weights:** Loads the saved model weights.
 - **Generates future data:** Simulates future stock data.
@@ -78,44 +79,7 @@ The `InferLstmModel` function in `LongShortTermMemory.py` loads the trained mode
 
 ### Usage
 
-To use the project:
-
-1. **Install dependencies:**
-   ```bash
-   pip install tensorflow pandas numpy matplotlib yfinance
-   ```
-
-2. **Run `TrainLstmNetwork` to train the model:**
-   ```python
-   from src import StockPredictionConfig
-   from src import StockDataProcessor
-   from src import LSTMN
-
-   stock_config = StockPredictionConfig(
-       ticker="GOOG",
-       start_date=pd.to_datetime("2017-06-07 15:59:00"),
-       end_date=pd.to_datetime("2024-06-12 15:59:00"),
-       validation_date=pd.to_datetime("2024-06-09 09:30:00"),
-       epochs=100,
-       time_steps=60,
-       token="GOOG"
-   )
-
-   data_processor = StockDataProcessor()
-   LSTMN.TrainLstmNetwork(stock_config, x_train, y_train, x_test, y_test, training_data, test_data)
-   ```
-
-3. **Run `InferLstmModel` to make predictions:**
-   ```python
-   from src import StockDataProcessor
-   from src import LSTMN
-
-   start_date = pd.to_datetime("2024-06-13 09:30:00")
-   end_date = pd.to_datetime("2024-06-14 15:59:00")
-   latest_close_price = 120.00  # Replace with the actual latest close price
-
-   LSTMN.InferLstmModel(start_date, end_date, latest_close_price, WORK_DIR, TIME_STEPS, STOCK_TICKER, CURRENCY) 
-   ```
+You can find the ```stock_prediction_lstm.ipynb``` notebook with useful examples for model creation, traning and prediction.
 
 ### Visualizations
 
