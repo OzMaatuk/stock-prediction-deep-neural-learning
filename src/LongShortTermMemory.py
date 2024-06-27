@@ -18,13 +18,37 @@ from tensorflow.keras.layers import LSTM
 from tensorflow.keras.metrics import MeanSquaredError # RootMeanSquaredError, MeanAbsoluteError
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Adam, RMSprop, SGD
+from tensorflow.keras.layers import Input
 # from tensorflow.keras.regularizers import l1, l2
 # from tensorflow.keras.layers import BatchNormalization
 # from tensorflow.keras.callbacks import LearningRateScheduler
 
 class LSTMModel:
-    def __init__(self, project_folder):
-        self.project_folder = project_folder
+    x_train_shape = None
+    epochs = None
+    batch_size = None
+    project_folder = None
+
+    def __init__(self, x_train_shape: tuple, epochs: int, batch_size: int, project_folder: str):
+        if not isinstance(x_train_shape, tuple) or len(x_train_shape) != 3:
+            raise ValueError("x_train_shape must be a tuple of length 3 (timesteps, features, 1).")
+
+        if not all(isinstance(dim, int) and dim > 0 for dim in x_train_shape):
+            raise ValueError("All dimensions in x_train_shape must be positive integers.")
+
+        if not isinstance(epochs, int) or epochs <= 0:
+            raise ValueError("epochs must be a positive integer.")
+
+        if not isinstance(batch_size, int) or batch_size <= 0:
+            raise ValueError("batch_size must be a positive integer.")
+
+        if not isinstance(project_folder, str) or not os.path.isdir(project_folder):
+            raise ValueError("project_folder must be a valid directory path.")
+    
+        LSTMModel.x_train_shape = x_train_shape
+        LSTMModel.epochs = epochs
+        LSTMModel.batch_size = batch_size
+        LSTMModel.project_folder = project_folder
 
     @staticmethod
     def get_metrics():
@@ -69,7 +93,12 @@ class LSTMModel:
             tf.keras.Model: The compiled LSTM model.
         """
 
+        if (LSTMModel.x_train_shape is None):
+            raise ValueError("LSTMModel class must be initialized before using this method.")
+
         model = Sequential()
+        # Define the input layer with the shape
+        model.add(Input(shape=(LSTMModel.x_train_shape[1], LSTMModel.x_train_shape[2])))
         # 1st layer with Dropout regularisation
         # * units = add 100 neurons is the dimensionality of the output space
         # * return_sequences = True to stack LSTM layers so the next LSTM layer has a three-dimensional sequence input
@@ -117,65 +146,11 @@ class LSTMModel:
         return model
 
 
-class LSTMModel:
-    def __init__(self, project_folder):
-        self.project_folder = project_folder
-
     @staticmethod
-    def get_metrics():
-        return [MeanSquaredError(name='MSE')]
-
-    @staticmethod
-    def get_callbacks():
-        callback = EarlyStopping(monitor='val_loss', patience=3, mode='min', verbose=1)
-        return [callback]
-
-    @staticmethod
-    def create(units=100, dropout=0.2, activation='relu', optimizer='adam'):
-        """Creates the LSTM model.
-
-        Args:
-            units (int, optional): Number of LSTM units. Defaults to 100.
-            dropout (float, optional): Dropout rate. Defaults to 0.2.
-            activation (str, optional): Activation function. Defaults to 'relu'.
-            optimizer (str, optional): Optimizer. Defaults to 'adam'.
-
-        Returns:
-            tf.keras.Model: The compiled LSTM model.
-
-        Raises:
-            ValueError: If an invalid optimizer is provided.
-        """
-        model = Sequential()
-        model.add(LSTM(units=units, return_sequences=True))
-        model.add(Dropout(dropout))
-        model.add(LSTM(units=units // 2, return_sequences=True))
-        model.add(Dropout(dropout))
-        model.add(LSTM(units=units // 2, return_sequences=True))
-        model.add(Dropout(dropout * 2.5))
-        model.add(LSTM(units=units // 2))
-        model.add(Dropout(dropout * 2.5))
-        model.add(Dense(units=1, activation=activation))
-
-        optimizers = {
-            'adam': Adam(),
-            'rmsprop': RMSprop(),
-            'sgd': SGD()
-        }
-        if optimizer.lower() in optimizers:
-            optimizer = optimizers[optimizer.lower()]
-        else:
-            raise ValueError(f"Invalid optimizer: {optimizer}. Choose from 'adam', 'rmsprop', or 'sgd'.")
-
-        model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=LSTMModel.get_metrics())
-        return model
-
-    @staticmethod
-    def train(stock_config: StockPredictionConfig, x_train, y_train, x_test, y_test, training_data, test_data) -> None:
+    def train(x_train, y_train, x_test, y_test, training_data, test_data) -> None:
         """Trains the LSTM model, saves weights, and evaluates performance.
 
         Args:
-            stock_config (StockPredictionConfig): Configuration settings.
             x_train (np.array): Training data.
             y_train (np.array): Training labels.
             x_test (np.array): Testing data.
@@ -183,23 +158,30 @@ class LSTMModel:
             training_data (pd.DataFrame):  Training DataFrame (for plotting).
             test_data (pd.DataFrame): Testing DataFrame (for plotting).
         """
+
+        if (LSTMModel.x_train_shape is None or
+            LSTMModel.epochs is None or
+            LSTMModel.batch_size is None or
+            LSTMModel.project_folder is None):
+            raise ValueError("LSTMModel class must be initialized before using this method.")
+
         try:
-            lstm = LSTMModel(stock_config.project_folder)
+            lstm = LSTMModel(LSTMModel.x_train_shape, LSTMModel.epochs, LSTMModel.batch_size, LSTMModel.project_folder)
             model = lstm.create()
             history = model.fit(
                 x_train, y_train,
-                epochs=stock_config.epochs,
-                batch_size=stock_config.batch_size,
+                epochs=LSTMModel.epochs,
+                batch_size=LSTMModel.batch_size,
                 validation_data=(x_test, y_test),
                 callbacks=lstm.get_callbacks()
             )
 
-            model_path = os.path.join(stock_config.project_folder, 'model_weights.keras')
+            model_path = os.path.join(LSTMModel.project_folder, 'model_weights.keras')
             model.save(model_path)
             logging.info(f"Model weights saved to: {model_path}")
 
             lstm.evaluate(model, x_test, y_test)
-            StockDataVisualizer.plot_results(stock_config, history, training_data, test_data, model, x_test)
+            StockDataVisualizer.plot_results(history, training_data, test_data, model, x_test, LSTMModel.project_folder)
             logging.info("Training and plotting complete.")
 
         except Exception as e:
