@@ -19,7 +19,6 @@ class StockDataVisualizer:
     @staticmethod
     def plot_histogram_data_split(training_data: pd.DataFrame, 
                                   test_data: pd.DataFrame, 
-                                  validation_date: datetime, 
                                   project_folder: str, 
                                   short_name: str = "", 
                                   currency: str = "") -> None:
@@ -40,7 +39,8 @@ class StockDataVisualizer:
             plt.plot(test_data.index, test_data.Close, color='red')
             plt.ylabel(f'Price [{currency}]')
             plt.xlabel("Date")
-            plt.legend(["Training Data", f"Validation Data >= {validation_date.strftime('%Y-%m-%d')}"], loc='upper left')
+            validation_date = test_data.index[0]
+            plt.legend(["Training Data", f"Validation Data >= {validation_date}"], loc='upper left')
             plt.title(short_name)
             plt.tight_layout()  # Adjust layout to prevent labels from overlapping
             plt.savefig(os.path.join(project_folder, 'price.png'))
@@ -50,7 +50,9 @@ class StockDataVisualizer:
             fig.savefig(os.path.join(project_folder, 'hist.png'))
 
             # Display plots 
-            plt.show() 
+            # plt.show()
+            plt.pause(0.001)
+            plt.show(block=True)
 
         except Exception as e:
             logging.error(f"Error plotting data split: {e}")
@@ -73,7 +75,9 @@ class StockDataVisualizer:
             plt.legend(loc='upper right')
             plt.tight_layout()
             plt.savefig(os.path.join(project_folder, 'loss.png'))
-            plt.show()  
+            # plt.show()
+            plt.pause(0.001)
+            plt.show(block=True)
 
         except Exception as e:
             logging.error(f"Error plotting loss: {e}")
@@ -96,8 +100,10 @@ class StockDataVisualizer:
             plt.legend(loc='upper right')
             plt.tight_layout() 
             plt.savefig(os.path.join(project_folder, 'MSE.png'))
-            plt.show() 
-
+            # plt.show()
+            plt.pause(0.001)
+            plt.show(block=True)
+            
         except Exception as e:
             logging.error(f"Error plotting MSE: {e}")
 
@@ -164,16 +170,15 @@ class StockDataVisualizer:
             logging.error(f"Error plotting future predictions: {e}")
 
     @staticmethod
-    def plot_results(stock_config: StockPredictionConfig, 
-                        history, 
-                        training_data: pd.DataFrame, 
-                        test_data: pd.DataFrame, 
-                        model, 
-                        x_test) -> None:
+    def plot_results(history, 
+                    training_data: pd.DataFrame, 
+                    test_data: pd.DataFrame, 
+                    model, 
+                    x_test,
+                    project_folder) -> None:
         """Plots all results (data split, loss, MSE, predictions).
 
         Args:
-            stock_config (StockPredictionConfig): Configuration settings.
             history:  The training history object.
             training_data (pd.DataFrame):  Training data.
             test_data (pd.DataFrame): Testing data.
@@ -181,26 +186,19 @@ class StockDataVisualizer:
             x_test:  Testing data for predictions.
         """
         try:
-            StockDataVisualizer.plot_histogram_data_split(
-                training_data, test_data, stock_config.validation_date, 
-                stock_config.project_folder, stock_config.short_name,
-                stock_config.currency
-            )
-            StockDataVisualizer.plot_loss(history, stock_config.project_folder)
-            StockDataVisualizer.plot_mse(history, stock_config.project_folder)
+            StockDataVisualizer.plot_histogram_data_split(training_data, test_data, project_folder)
+            StockDataVisualizer.plot_loss(history, project_folder)
+            StockDataVisualizer.plot_mse(history, project_folder)
 
             logging.info("Plotting prediction results...")
             test_predictions_baseline = model.predict(x_test)
             test_predictions_baseline = StockDataProcessor.min_max.inverse_transform(test_predictions_baseline)
             test_predictions_baseline = pd.DataFrame(test_predictions_baseline, columns=['Predicted_Price'])
-            test_predictions_baseline.to_csv(os.path.join(stock_config.project_folder, 'predictions.csv'))
+            test_predictions_baseline.to_csv(os.path.join(project_folder, 'predictions.csv'))
 
             test_predictions_baseline = test_predictions_baseline.round(decimals=0)
             test_predictions_baseline.index = test_data.index
-            StockDataVisualizer.plot_predictions(
-                test_predictions_baseline, test_data, stock_config.project_folder, 
-                stock_config.ticker, stock_config.currency 
-            ) 
+            StockDataVisualizer.plot_predictions(test_predictions_baseline, test_data, project_folder)
 
         except Exception as e:
             logging.error(f"Error in plot_results: {e}")

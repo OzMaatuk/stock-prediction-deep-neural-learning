@@ -5,6 +5,7 @@ import logging
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+@DeprecationWarning
 class StockPredictionConfig:
     """Holds and validates configuration for stock prediction.
 
