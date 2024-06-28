@@ -146,7 +146,8 @@ class StockDataVisualizer:
         """Plots predicted future stock prices vs. simulated prices.
 
         Args:
-            combined_data (pd.DataFrame):  Combined simulated and predicted data.
+            test_data (pd.DataFrame):  test data.
+            predicted_data (pd.DataFrame):  predicted data.
             project_folder (str): Directory to save plot.
             short_name (str, optional): Stock short name. Defaults to "".
             currency (str, optional): Currency symbol. Defaults to "".
