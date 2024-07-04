@@ -94,3 +94,8 @@ The project includes various visualizations:
 ### Hyperparameter Tuning
 
 The project includes a separate notebook (`hyper_tuning.ipynb`) dedicated to hyperparameter tuning for the LSTM model. This notebook uses scikit-learn's `GridSearchCV` or `RandomizedSearchCV` to find the best combination of hyperparameters for improved model performance.
+
+### Cross Validation
+
+The project includes a separate notebook (`cross_validation.ipynb`) dedicated to cross validation operation for the LSTM model. This notebook uses scikit-learn and keras for testong the model performance.
+
